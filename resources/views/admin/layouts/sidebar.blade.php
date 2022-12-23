@@ -17,14 +17,14 @@
                 </li>
 
                 <li>
-                    <a href="chat" class="waves-effect">
+                    <a href="{{ route('admin.users.index') }}" class="waves-effect">
                         <i class="bx bxs-user-detail"></i>
                         <span key="t-contacts">Users</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="chat" class="waves-effect">
+                    <a href="{{ route('admin.role.index') }}" class="waves-effect">
                         <i class="bx bx-list-ul"></i>
                         <span key="t-contacts">Roles</span>
                     </a>

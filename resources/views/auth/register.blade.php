@@ -1,8 +1,6 @@
 @extends('layouts.master-without-nav')
 
-@section('title')
-    @lang('translation.Register') 2
-@endsection
+@section('title') Register @endsection
 
 @section('css')
     <!-- owl.carousel css -->
@@ -115,7 +113,7 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-        
+
                                                 <div class="mb-3">
                                                     <label for="username" class="form-label">Username</label>
                                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
@@ -127,7 +125,7 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-        
+
                                                 <div class="mb-3">
                                                     <label for="userpassword" class="form-label">Password</label>
                                                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="userpassword" name="password"
@@ -138,7 +136,7 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-        
+
                                                 <div class="mb-3">
                                                     <label for="confirmpassword" class="form-label">Confirm Password</label>
                                                     <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id="confirmpassword"
@@ -149,26 +147,11 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-        
-                                                <div class="mb-3">
-                                                    <label for="userdob">Date of Birth</label>
-                                                    <div class="input-group" id="datepicker1">
-                                                        <input type="text" class="form-control @error('dob') is-invalid @enderror" placeholder="dd-mm-yyyy"
-                                                            data-date-format="dd-mm-yyyy" data-date-container='#datepicker1' data-date-end-date="0d" value="{{ old('dob') }}"
-                                                            data-provide="datepicker" name="dob" autofocus required>
-                                                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-                                                        @error('dob')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-        
+
                                                 <div class="mb-3">
                                                     <label for="avatar">Profile Picture</label>
                                                     <div class="input-group">
-                                                        <input type="file" class="form-control @error('avatar') is-invalid @enderror" id="inputGroupFile02" name="avatar" autofocus required>
+                                                        <input type="file" class="form-control @error('avatar') is-invalid @enderror" id="inputGroupFile02" name="avatar" autofocus >
                                                         <label class="input-group-text" for="inputGroupFile02">Upload</label>
                                                     </div>
                                                     @error('avatar')
@@ -177,15 +160,15 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-        
+
                                                 <div class="mt-4 d-grid">
                                                     <button class="btn btn-primary waves-effect waves-light"
                                                         type="submit">Register</button>
                                                 </div>
-        
+
                                                 <div class="mt-4 text-center">
                                                     <h5 class="font-size-14 mb-3">Sign up using</h5>
-        
+
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item">
                                                             <a href="#"
@@ -207,7 +190,7 @@
                                                         </li>
                                                     </ul>
                                                 </div>
-        
+
                                                 <div class="mt-4 text-center">
                                                     <p class="mb-0">By registering you agree to the Skote <a href="#"
                                                             class="text-primary">Terms of Use</a></p>
@@ -244,9 +227,8 @@
 
     @endsection
     @section('script')
-        <script src="{{ URL::asset('/assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
         <!-- owl.carousel js -->
-        <script src="{{ URL::asset('/assets/libs/owl.carousel/owl.carousel.min.js') }}"></script>
+        <script src="{{ asset('/assets/libs/owl.carousel/owl.carousel.min.js') }}"></script>
         <!-- auth-2-carousel init -->
-        <script src="{{ URL::asset('/assets/js/pages/auth-2-carousel.init.js') }}"></script>
+        <script src="{{ asset('/assets/js/pages/auth-2-carousel.init.js') }}"></script>
     @endsection

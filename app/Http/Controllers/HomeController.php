@@ -37,7 +37,7 @@ class HomeController extends Controller
 
     public function root()
     {
-        //dd(auth()->user());
+        //dd(auth()->user()->hasRole('user'));
         return view('index');
     }
 

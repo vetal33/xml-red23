@@ -22,11 +22,9 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
-Route::get('/admin', [\App\Http\Controllers\Admin\HomeController::class, 'index'])->name('home.index');
 
-//Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('user.index');
-
-Route::name("admin.")->prefix("admin")->middleware(['auth', 'role::admin'])->group(function () {
+Route::name("admin.")->prefix("admin")->middleware('role:admin')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\HomeController::class, 'index'])->name('home.index');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::get('/roles', [\App\Http\Controllers\Admin\RoleController::class, 'index'])->name('role.index');
 });

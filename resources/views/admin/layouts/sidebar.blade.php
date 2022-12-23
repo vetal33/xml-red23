@@ -10,7 +10,7 @@
                 <li class="menu-title" key="t-menu">Menu</li>
 
                 <li>
-                    <a href="chat" class="waves-effect">
+                    <a href="{{ route('admin.home.index') }}" class="waves-effect">
                         <i class="bx bx-home-circle"></i>
                         <span key="t-chat">Dashboards</span>
                     </a>

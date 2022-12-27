@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6f00125a3319a9afa5d8165b8698ebd",
+    "content-hash": "77567642285a193a68ad22232c1f9fb0",
     "packages": [
         {
             "name": "brick/math",
@@ -896,6 +896,66 @@
                 }
             ],
             "time": "2022-10-26T14:07:24+00:00"
+        },
+        {
+            "name": "hyperized/xml-validator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperized/xml-validator.git",
+                "reference": "70794153bf69b6cf92f29de706b488cbe59d1014"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperized/xml-validator/zipball/70794153bf69b6cf92f29de706b488cbe59d1014",
+                "reference": "70794153bf69b6cf92f29de706b488cbe59d1014",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "20031129",
+                "ext-libxml": "^7.2 || ^8.0",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "bmitch/churn-php": "^1.0.3",
+                "ergebnis/composer-normalize": "^2.3",
+                "ext-mbstring": "^7.2",
+                "infection/infection": "^0.15.0",
+                "phan/phan": "^2.4",
+                "phpmd/phpmd": "@stable",
+                "phpstan/phpstan": "^0.12.0",
+                "phpunit/phpunit": "^7 || ^8 || ^9",
+                "povils/phpmnd": "^2.0",
+                "squizlabs/php_codesniffer": "^3.5",
+                "vimeo/psalm": "^3.8"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyperized\\Xml\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gerben Geijteman",
+                    "email": "gerben@hyperized.net"
+                }
+            ],
+            "description": "A simple PHP XML validator",
+            "keywords": [
+                "validator",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/hyperized/xml-validator/issues",
+                "source": "https://github.com/hyperized/xml-validator/tree/master"
+            },
+            "time": "2022-04-08T15:40:57+00:00"
         },
         {
             "name": "laravel/framework",

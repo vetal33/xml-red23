@@ -31,6 +31,7 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar',
+        'comment',
     ];
 
     /**
@@ -51,4 +52,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function medias()
+    {
+        return $this->hasMany(Media::class);
+    }
+
+    public function xmlNormative()
+    {
+        return $this->hasMany(Media::class)
+            ->where('type', Media::TYPE_XML_NORMATIVE)
+            ->where('status', Media::STATUS_ACTIVE);
+    }
 }

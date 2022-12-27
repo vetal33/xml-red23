@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -60,12 +61,11 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-
-        dd($user);
-        return view('users.edit', [
+        //dd(Role::all());
+        return view('admin.users.edit', [
             'user' => $user,
-            'userRole' => $user->roles->pluck('name')->toArray(),
-            'roles' => Role::latest()->get()
+            'userRole' => $user->roles->toArray(),
+            'roles' => Role::all(),
         ]);
     }
 

@@ -23,6 +23,13 @@ Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/map', [\App\Http\Controllers\MapController::class, 'index'])->name('map.index');
+    Route::get('/xml-validator', [\App\Http\Controllers\XmlValidatorController::class, 'index'])->name('xml-validator.index');
+    Route::post('xml-validator/upload', [\App\Http\Controllers\XmlValidatorController::class, 'store'])->name('xml-validator.upload');
+    Route::post('xml-validator/structure-validate/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'structureValidate'])->name('xml-validator.structure-validate');
+});
+
 Route::name("admin.")->prefix("admin")->middleware('role:admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\HomeController::class, 'index'])->name('home.index');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);

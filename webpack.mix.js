@@ -247,3 +247,5 @@ mix.combine('resources/js/app.js', folder.dist_assets + "js/app.min.js");
 mix.combine('resources/js/pages/calendars.js', folder.dist_assets + "js/pages/calendars.js");
 mix.combine('resources/js/pages/schedules.js', folder.dist_assets + "js/pages/schedules.js");
 mix.combine('resources/js/pages/leaflet-us-states.js', folder.dist_assets + "js/pages/leaflet-us-states.js");
+
+mix.combine('resources/js/xml-validation.js', folder.dist_assets + "js/xml-validation.js");

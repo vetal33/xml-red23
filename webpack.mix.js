@@ -149,6 +149,7 @@ lodash(third_party_assets).forEach(function(assets, type) {
 
 mix.copyDirectory("./node_modules/tinymce", folder.dist_assets + "/libs/tinymce");
 mix.copyDirectory("./node_modules/leaflet/dist/images", folder.dist_assets + "/libs/leaflet/images");
+mix.copyDirectory("./node_modules/leaflet/dist/images", folder.dist_assets + "/css/images");
 mix.copyDirectory("./node_modules/bootstrap-editable/img", folder.dist_assets + "/libs/img");
 
 // copy all fonts
@@ -162,6 +163,7 @@ mix.copyDirectory(folder.src + "images", out);
 mix.sass('resources/scss/bootstrap.scss', folder.dist_assets + "css").minify(folder.dist_assets + "css/bootstrap.css");
 mix.sass('resources/scss/icons.scss', folder.dist_assets + "css").options({ processCssUrls: false }).minify(folder.dist_assets + "css/icons.css");
 mix.sass('resources/scss/app.scss', folder.dist_assets + "css").options({ processCssUrls: false }).minify(folder.dist_assets + "css/app.css");
+mix.sass('resources/scss/map.scss', folder.dist_assets + "css").options({ processCssUrls: false }).minify(folder.dist_assets + "css/map.css");
 
 
 mix.webpackConfig({
@@ -249,3 +251,5 @@ mix.combine('resources/js/pages/schedules.js', folder.dist_assets + "js/pages/sc
 mix.combine('resources/js/pages/leaflet-us-states.js', folder.dist_assets + "js/pages/leaflet-us-states.js");
 
 mix.combine('resources/js/xml-validation.js', folder.dist_assets + "js/xml-validation.js");
+//mix.js('resources/js/base-layers.js', folder.dist_assets + "js/base-layers.js");
+mix.js('resources/js/map.js', folder.dist_assets + "js/map.js");

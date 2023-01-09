@@ -1,0 +1,13 @@
+a {
+  position: relative;
+}
+
+#file-form-jsonFile {
+  position: absolute;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  -moz-opacity: 0;
+  -khtml-opacity: 0;
+  opacity: 0;
+  cursor: pointer;
+  right: 0;
+}

@@ -7,7 +7,6 @@ Contact: themesbrand@gmail.com
 File: Main Js File
 */
 
-
 (function ($) {
 
     'use strict';
@@ -217,7 +216,7 @@ File: Main Js File
             if (!alreadyVisited) {
                 if ($('html').attr('dir') === 'rtl' && $('body').attr('data-layout-mode') === 'dark') {
                     $("#dark-rtl-mode-switch").prop('checked', true);
-                    $("#light-mode-switch").prop('checked', false);  
+                    $("#light-mode-switch").prop('checked', false);
                     sessionStorage.setItem("is_visited", "dark-rtl-mode-switch");
                     updateThemeSetting(alreadyVisited);
                 }else if ($('html').attr('dir') === 'rtl') {

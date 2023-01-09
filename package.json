@@ -76,7 +76,7 @@
         "jquery.flot.tooltip": "^0.9.0",
         "jquery.repeater": "^1.2.1",
         "jszip": "^3.2.2",
-        "leaflet": "^1.6.0",
+        "leaflet": "^1.9.3",
         "magnific-popup": "^1.1.0",
         "masonry-layout": "^4.2.2",
         "metismenu": "^3.0.4",

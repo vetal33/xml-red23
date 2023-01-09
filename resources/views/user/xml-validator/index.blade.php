@@ -65,7 +65,7 @@
                             <ul class="verti-timeline list-unstyled">
                                 <li class="event-list">
                                     <div class="event-timeline-dot">
-                                        @if (Session::has('structure'))
+                                        @if (Session::has('structure') || Session::has('geom'))
                                             <span class="text-success">
                                                 <i class="bx bx bxs-check-circle font-size-22"></i>
                                             </span>
@@ -77,7 +77,7 @@
                                     <div class="d-flex">
                                         <div class="flex-shrink-0 me-3">
                                             <h5 class="font-size-14">Структура
-                                                @if (Session::has('structure'))
+                                                @if (Session::has('structure') || Session::has('geom'))
                                                 @else
                                                     <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i>
                                                 @endif
@@ -87,7 +87,13 @@
                                 </li>
                                 <li class="event-list">
                                     <div class="event-timeline-dot">
-                                        <i class="bx bx-right-arrow-circle font-size-18"></i>
+                                        @if (Session::has('geom'))
+                                            <span class="text-success">
+                                                <i class="bx bx bxs-check-circle font-size-22"></i>
+                                            </span>
+                                        @else
+                                            <i class="bx bx-right-arrow-circle font-size-18"></i>
+                                        @endif
                                     </div>
                                     <div class="d-flex">
                                         <div class="flex-shrink-0 me-3">
@@ -109,16 +115,22 @@
             <div class="col-xl-9">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('xml-validator.structure-validate', ['file' => $xmlNormative->id]) }}"
+                        <form action="{{ Session::has('structure') ? route('xml-validator.geom-validate', ['file' => $xmlNormative->id]) : route('xml-validator.structure-validate', ['file' => $xmlNormative->id]) }}"
                               method="POST">
                             @csrf
                             <input type="hidden" name="file">
                             <div class="d-sm-flex flex-wrap">
                                 <h4 class="card-title mb-4">Перевірка <span
-                                        class="text-primary @if(Session::has('validationErrors')) text-danger @endif">{{ $xmlNormative->name }}</span></h4>
+                                        class="text-primary @if(Session::has('validationErrors')) text-danger @elseif(Session::has('geom')) text-success @endif">{{ $xmlNormative->name }}</span></h4>
 
                                 <div class="ms-auto">
                                     <ul class="nav nav-pills">
+                                        @if(Session::has('validationErrors'))
+                                        <li class="nav-item me-3">
+                                            <a class="btn btn-outline-primary validation-error-export" href="{{ route('validator-xml.print-errors-pdf', ['file' => $xmlNormative->id]) }}">
+                                                <i class="bx bxs-file-pdf font-size-16 align-middle me-2"></i>Експорт</a>
+                                        </li>
+                                        @endif
                                         <li class="nav-item">
                                             <button id="xml-validation" type="button" class="nav-link active">Перевірити</button>
                                         </li>

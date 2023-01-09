@@ -28,7 +28,7 @@ class XmlNormativeRequest extends FormRequest
             'file' => [
                 'required',
                 File::types(['xml', 'jpg'])
-                    ->max(5 * 1024),
+                    ->max(50 * 1024),
             ]
         ];
     }

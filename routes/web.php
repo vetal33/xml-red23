@@ -28,9 +28,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/xml-validator', [\App\Http\Controllers\XmlValidatorController::class, 'index'])->name('xml-validator.index');
     Route::post('xml-validator/upload', [\App\Http\Controllers\XmlValidatorController::class, 'store'])->name('xml-validator.upload');
     Route::post('map/upload-json', [\App\Http\Controllers\MapController::class, 'uploadJson'])->name('map.upload-json');
+    Route::get('map/all-parcels', [\App\Http\Controllers\MapController::class, 'getAllParcels'])->name('map.get-all-parcels');
     Route::post('xml-validator/structure-validate/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'structureValidate'])->name('xml-validator.structure-validate');
     Route::post('xml-validator/geom-validate/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'geomValidate'])->name('xml-validator.geom-validate');
     Route::get('xml-validator/export-errors/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'printErrorsPdf'])->name('validator-xml.print-errors-pdf');
+
+    Route::get('xml-validator/export-errors/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'printErrorsPdf'])->name('validator-xml.print-errors-pdf');
+
+    Route::resource('parcels', \App\Http\Controllers\ParcelController::class);
 });
 
 Route::name("admin.")->prefix("admin")->middleware('role:admin')->group(function () {

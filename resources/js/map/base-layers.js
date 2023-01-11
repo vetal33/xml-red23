@@ -1,7 +1,7 @@
-window.addBaseLayars = require('./services.js');
-//import './services';
+window.addServices = require('./services.js');
+window.addStyle = require('./style.js');
+window.addControls = require('./controls.js');
 //module.exports = function () {
-//export const myFunction = () => {
 //var leafletMap = L.map('map').setView([48.5, 31], 6);
 /** Створюєм карту MapBox  */
 let mapbox = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -50,5 +50,7 @@ let baseLayersMap = {
 
 /**  Додаємо базові шари на карту   */
 window.layersControl = L.control.layers(baseLayersMap).addTo(leafletMap);
+
+
 //}
 //};

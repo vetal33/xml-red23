@@ -73,4 +73,20 @@ trait GeometryTrait
         return $numberArr['json'];
     }
 
+    public function getExtent($geom)
+    {
+        $result = DB::select(DB::raw("select ST_Extent(ST_GeomFromText(:geom)) as extent"), ['geom' => $geom]);
+        $numberArr = (array)$result[0];
+
+        return $numberArr['extent'];
+    }
+
+    public function getJsonFromGeom($geom)
+    {
+        $result = DB::select(DB::raw("SELECT ST_AsGeoJSON(:geom) AS json"), ['geom' => $geom]);
+        $numberArr = (array)$result[0];
+
+        return $numberArr['json'];
+    }
+
 }

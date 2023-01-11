@@ -51,71 +51,37 @@ $(document).ready(function () {
                 setSpinner(thisEl);
             },
             success: function (data) {
-                //overlayControl[0].hidden = true;
-
-
                 setSpinner(thisEl, false);
                 if (data.result === false) {
                     toastr["error"](data.error);
                 }
-
-
-                console.log('dd');
-                console.log(data);
-                //console.log(JSON.parse(data));
-               // return false;
-
-
-                //var dataJ = JSON.parse(data.json);
-                //console.log(dataJ);
-                //console.log(JSON.parse(dataJ));
                 parcelFromBaseLayer.clearLayers();
+                let coord = JSON.parse(data.parcel.json);
+                let new_parcel = {
+                    "type": "Feature",
+                    "properties": {
+                        "id": data.parcel.id,
+                        "area": data.parcel.area,
+                        "cadnum": data.parcel.cadNum,
+                        "name": "parcelFromBase",
+                        "fromBase": true,
+                        "purpose": data.parcel.purpose,
+                    },
+                    "geometry": {
+                        "type": coord.type,
+                        "coordinates": coord.coordinates,
+                    },
+                };
 
-                //let feature = dataJ.map(function (item) {
-                    let coord = JSON.parse(data.json);
-                    //console.log(coord);
-                    let item_new = {
-                        "type": "Feature",
-                        "properties": {
-                            "area": data.area,
-                            "cadnum": data.cadNum,
-                            "name": "parcelFromBase",
-                            "fromBase": true,
-                            "purpose": data.purpose,
-                        },
-                        "geometry": {
-                            "type": coord.type,
-                            "coordinates": coord.coordinates,
-                        },
-                    };
-
-                    //return item_new;
-                //});
-                //console.log(item_new);
-                parcelFromBaseLayer.addData(item_new);
-                //parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
+                parcelFromBaseLayer.addData(new_parcel);
+                parcelFromBaseLayer.setStyle(addFeatureFromJsonSelectedStyle);
                 parcelFromBaseLayer.addTo(parcelFromBaseGroup);
 
                 /** Додаємо групу до карти    */
                 parcelFromBaseGroup.addTo(leafletMap);
-
-/*                $('#marker-parcels').html('<i class="fas fa-check text-success"></i>');
-                $('#parcels').prop('disabled', false);*/
-
                 leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
 
-
-                //$('#calculate').remove();
-
-               // let dataJson = JSON.parse(data);
-/*                if (dataJson.errors.length) {
-                    errorsHandler(dataJson.errors);
-
-                    return false;
-                }*/
-
-                /*let bounds = addFeatureToMap(dataJson);
-                setDataToParcelTable(dataJson, bounds);*/
+                updateDataTable(data);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 toastr["error"]("Помилка обробки файла!");
@@ -125,8 +91,62 @@ $(document).ready(function () {
         })
     }
 
-    function setSpinner(thisEl, isVisible = true)
-    {
+    function getAllParcels() {
+        var href = $('#get-all-parcels').data('href');
+        $.ajax({
+            url: href,
+            method: 'GET',
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (data) {
+                if (data.result === false) {
+                    toastr["error"](data.error);
+                }
+                parcelFromBaseLayer.clearLayers();
+
+                let feature = data.map(function (item) {
+                    let coord = JSON.parse(item.json);
+                    let item_new = {
+                        "type": "Feature",
+                        "properties": {
+                            //"area": item.area,
+                            "cadnum": item.cadNum,
+                            "name": "parcelFromBase",
+                            "fromBase": true,
+                            "usage": item.usage,
+                        },
+                        "geometry": {
+                            "type": coord.type,
+                            "coordinates": coord.coordinates,
+                        },
+                    };
+
+                    return item_new;
+                });
+
+                if (feature.length > 0) {
+                    parcelFromBaseLayer.addData(feature);
+                    parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
+                    parcelFromBaseLayer.addTo(parcelFromBaseGroup);
+
+                    /** Додаємо групу до карти    */
+                    parcelFromBaseGroup.addTo(leafletMap);
+                    leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                toastr["error"]("Помилка обробки файла!");
+            },
+        })
+    }
+
+    getAllParcels();
+
+    function setSpinner(thisEl, isVisible = true) {
         if (isVisible === true) {
             $(thisEl).closest('a').find('i').removeClass('bx-add-to-queue');
             $(thisEl).closest('a').find('i').addClass('bx-loader bx-spin');
@@ -137,4 +157,80 @@ $(document).ready(function () {
             $(thisEl).closest('a').removeClass('disabled');
         }
     }
+    $('body').on('click', '.btn-remove', function (e) {
+        e.preventDefault();
+        var that = this;
+        Swal.fire({
+            title: "Ви впевнені?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#34c38f",
+            cancelButtonColor: "#f46a6a",
+            confirmButtonText: "Так, видалити ділянку!",
+            cancelButtonText: "Відмінити",
+        }).then(function (result) {
+            if (result.value) {
+                $.ajax({
+                    url: $(that).attr('href'),
+                    method: 'DELETE',
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        if (data.result === false) {
+                            toastr["error"](data.error);
+                        } else {
+                            toastr["success"]('Ділянка успішно видалена');
+                            updateDataTable(data);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr["error"]("Невідома помилка!");
+                    },
+                })
+                //Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            }
+        });
+    });
+
+    $('body').on('click', '.btn-save', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr('href'),
+            method: 'PATCH',
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (data) {
+                if (data.result === false) {
+                    toastr["error"](data.error);
+                } else {
+                    toastr["success"]('Ділянка успішно збережена');
+                    updateDataTable(data);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                toastr["error"]("Невідома помилка!");
+            },
+        })
+
+    });
+
+
+    var updateDataTable = function (data) {
+        var dataTable = $('.data-table');
+
+        $(dataTable).html('');
+        $(dataTable).append(data.tableHtml);
+        $('#datatable').DataTable();
+    };
+
+
 });

@@ -22,6 +22,8 @@ class FeatureService
     public function transformFromSC63to4326(string $feature, int $zone = 0)
     {
         $zone = ($zone === 0) ? $this->getZoneFromCoords($feature) : $zone;
+        //dd($zone);
+
 
         $result = DB::select(DB::raw("select ST_AsText(st_transform(st_transform(ST_GeomFromText(:polygon, :zone), 4284), 4326))"), ['polygon' => $feature, 'zone' => $zone]);
         $numberArr = (array)$result[0];

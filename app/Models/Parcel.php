@@ -17,12 +17,15 @@ class Parcel extends Model
         'user_id',
         'geom_id',
         'original_geom',
-        'point'
+        'point',
+        'extent',
+        'is_passed'
     ];
 
     protected $postgisFields = [
         'geom',
-        'point'
+        'point',
+        'original_geom',
     ];
 
     protected $postgisTypes = [
@@ -32,13 +35,20 @@ class Parcel extends Model
         ],
     ];
 
-/*    protected $casts = [
-        'geom' => 'geometry',
-    ];*/
+    protected $casts = [
+        'is_passed' => 'boolean',
+    ];
 
 
     public function user(): ?User
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeMyParcels($query)
+    {
+        $query
+            ->where('user_id', auth()->user()->id)
+            ->orderBy('created_at', 'DESC');
     }
 }

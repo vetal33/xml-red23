@@ -11,3 +11,25 @@ a {
   cursor: pointer;
   right: 0;
 }
+
+#coordinates-map {
+  font-size: 0.8rem;
+  margin-bottom: 11px;
+  color: darkslategrey;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding-top: 2px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+a.btn-save, a.btn-zoom {
+  padding: 4px 5px 2px 6px;
+}
+
+a.btn-remove {
+  padding: 4px 5px 2px 5px;
+}
+a.btn-remove:hover {
+  background-color: #f46a6a;
+}

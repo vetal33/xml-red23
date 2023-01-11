@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use MStaack\LaravelPostgis\Eloquent\PostgisTrait;
@@ -9,6 +10,7 @@ use MStaack\LaravelPostgis\Eloquent\PostgisTrait;
 class Parcel extends Model
 {
     use HasFactory, PostgisTrait;
+
     protected $fillable = [
         'cad_nub',
         'usage',
@@ -50,5 +52,10 @@ class Parcel extends Model
         $query
             ->where('user_id', auth()->user()->id)
             ->orderBy('created_at', 'DESC');
+    }
+
+    public function parcelProblems()
+    {
+        return $this->hasMany(ParcelProblem::class);
     }
 }

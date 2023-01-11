@@ -130,6 +130,7 @@ $(document).ready(function () {
 
                 if (feature.length > 0) {
                     parcelFromBaseLayer.addData(feature);
+                    parcelFromBaseLayer.nameLayer = "parcels";
                     parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
                     parcelFromBaseLayer.addTo(parcelFromBaseGroup);
 

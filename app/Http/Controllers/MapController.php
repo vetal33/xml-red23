@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\JsonUploadRequest;
 use App\Models\Parcel;
+use App\Models\ParcelProblem;
 use App\Services\FeatureService;
 use App\Services\ParcelService;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class MapController extends Controller
         return view('user.map.index', compact('parcels'));
     }
 
-    public function uploadJson(Request $request, FeatureService $featureService)
+    public function uploadJson(Request $request, FeatureService $featureService, ParcelService $parcelService)
     {
         if ($request->ajax()) {
             $rules = (new JsonUploadRequest())->rules();
@@ -50,15 +51,24 @@ class MapController extends Controller
             $data['json'] = $jsonTransform;
             $data['result'] = true;
 
-            $parcel = Parcel::create([
+            $newParcel = Parcel::create([
                 'user_id' => auth()->user()->id,
                 'extent' => $extent,
                 'geom' => $wktTransform,
                 'original_geom' => $wkt,
             ]);
 
-            $data['id'] = $parcel->id;
+            $data['id'] = $newParcel->id;
             $parcels = Parcel::myParcels()->get();
+            $intrsectIds = $parcelService->intersectParcels($wkt, $newParcel->id);
+
+            foreach ($intrsectIds as $id) {
+                $newParcel->parcelProblems()->create([
+                    'parcel_id' => $newParcel->id,
+                    'type' => ParcelProblem::INTERSECTED,
+                ]);
+            }
+
             $tableHtml = view('user.map.partials.datatable', compact('parcels'))->render();
 
             return response()->json(['result' => true, 'tableHtml' => $tableHtml, 'parcel' => $data]);

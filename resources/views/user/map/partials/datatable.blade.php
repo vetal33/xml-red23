@@ -16,22 +16,29 @@
             <td>{{ $parcel->usage ?? '' }}</td>
             <td>{{ $parcel->area_origin ? number_format(round(($parcel->area_origin) / 10000, 4), 4) : '' }}</td>
             <td>{{ $parcel->created_at ? $parcel->created_at->format('d-m-Y H:i') : '' }}</td>
-            <td style="width: 165px">
+            <td style="width: 180px">
                 @if($parcel->is_passed)
-                <a class="btn btn-outline-secondary btn-sm edit" href="{{ route('parcels.edit', ['parcel' => $parcel->id]) }}" title="Edit">
-                    <i class="fas fa-pencil-alt"></i>
+                <a class="btn btn-outline-secondary btn-sm edit btn-edit" href="{{ route('parcels.edit', ['parcel' => $parcel->id]) }}" title="Edit">
+                    <i class="mdi mdi-pencil-outline font-size-18"></i>
                 </a>
                 @else
                 <a class="btn btn-outline-secondary btn-sm save btn-save" href="{{ route('parcels.update', ['parcel' => $parcel->id]) }}" title="Save">
-                    <i class="bx bxs-save font-size-16"></i>
+                    <i class="mdi mdi-content-save-outline font-size-18"></i>
                 </a>
                 @endif
                 <a class="btn btn-outline-secondary btn-sm zoom btn-zoom ms-1" href="#" title="Zoom" data-extent="{{ $parcel->extent }}">
-                    <i class="bx bxs-map-pin font-size-16"></i>
+                    <i class="mdi mdi-map-search font-size-18"></i>
                 </a>
-                <a class="btn btn-outline-secondary btn-sm zoom btn-remove ms-1" href="{{ route('parcels.destroy', ['parcel' => $parcel->id]) }}" title="Delete">
-                    <i class="bx bx-x-circle font-size-16"></i>
+                <a class="btn btn-outline-secondary btn-sm zoom btn-remove ms-4" href="{{ route('parcels.destroy', ['parcel' => $parcel->id]) }}" title="Delete">
+                    @if($parcel->is_passed)
+                    <i class="mdi mdi-delete-outline font-size-18"></i>
+                    @else
+                    <i class="mdi mdi-delete-clock-outline font-size-18"></i>
+                    @endif
                 </a>
+                @if(!$parcel->parcelProblems->isEmpty())
+                <a href="#" class="text-danger ms-1"><i class="mdi mdi-information-outline font-size-18"></i></a>
+                @endif
             </td>
         </tr>
     @endforeach

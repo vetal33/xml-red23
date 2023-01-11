@@ -78,7 +78,33 @@ var coordinates = L.Control.extend({
     return container;
   }
 });
+/** Full extent button  */
+
+var fullzoomButton = L.Control.extend({
+  options: {
+    position: 'topleft'
+  },
+  onAdd: function onAdd() {
+    var container = L.DomUtil.create('a', 'btn btn-outline-secondary'); // let container = L.DomUtil.create('a', 'btn btn-outline-secondary btn-sm edit');
+
+    container.innerHTML += '<i class="mdi mdi-arrow-expand-all font-size-20"></i>';
+    container.type = "button";
+    container.title = "Загальний вигляд";
+    container.setAttribute("data-toggle", "tooltip");
+
+    container.onclick = function () {
+      leafletMap.eachLayer(function (layer) {
+        if (layer.nameLayer && layer.nameLayer === "parcels") {
+          leafletMap.fitBounds(layer.getBounds());
+        }
+      });
+    };
+
+    return container;
+  }
+});
 leafletMap.addControl(new coordinates());
+leafletMap.addControl(new fullzoomButton());
 /** Set coordinates into the map  */
 
 leafletMap.addEventListener('mousemove', function (ev) {
@@ -141,7 +167,6 @@ $('body').on('click', '.btn-zoom', function (e) {
   //let boundsStr = $(this).attr('data-bounds');
 
   var boundsStr = $(this).data('extent');
-  console.log(boundsStr);
   var bound = setBounds(boundsStr);
 
   if (bound.length) {
@@ -433,6 +458,7 @@ $(document).ready(function () {
 
         if (feature.length > 0) {
           parcelFromBaseLayer.addData(feature);
+          parcelFromBaseLayer.nameLayer = "parcels";
           parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
           parcelFromBaseLayer.addTo(parcelFromBaseGroup);
           /** Додаємо групу до карти    */

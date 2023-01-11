@@ -36,7 +36,6 @@ $('body').on('click', '.btn-zoom', function (e) {
 
     //let boundsStr = $(this).attr('data-bounds');
     let boundsStr = $(this).data('extent');
-    console.log(boundsStr);
     let bound = setBounds(boundsStr);
     if (bound.length) {
         leafletMap.fitBounds(bound, {maxZoom: 18});

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Parcel;
 use Illuminate\Database\Eloquent\Collection;
 use MStaack\LaravelPostgis\Geometries\Geometry;
 
@@ -36,6 +37,26 @@ class ParcelService
         }
 
         return $parcelsToMap;
+    }
+
+    public function intersectParcels(string $parcelWktGeom, $idNewParcel = 0): array
+    {
+        $intrsectIds = [];
+        $parcels = Parcel::myParcels()->get();
+
+        if ($idNewParcel !== 0) {
+            $filtered = $parcels->except(['id', $idNewParcel]);
+        }
+
+        foreach ($filtered as $parcel) {
+            $geom = $parcel->original_geom;
+            $wkt = $geom->toWKT();
+            if ($this->featureService->isIntersect($parcelWktGeom, $wkt)) {
+                $intrsectIds[] = $parcel->id;
+            }
+        }
+
+        return $intrsectIds;
     }
 
 }

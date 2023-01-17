@@ -11,30 +11,32 @@ class Parcel extends Model
 {
     use HasFactory, PostgisTrait;
 
+
     protected $fillable = [
         'cad_nub',
         'usage',
         'geom',
         'area_origin',
+        'area_calculate',
         'user_id',
         'geom_id',
         'original_geom',
         'point',
         'extent',
-        'is_passed'
+        'is_passed',
+        'file_name'
     ];
 
     protected $postgisFields = [
         'geom',
-        'point',
         'original_geom',
     ];
 
     protected $postgisTypes = [
-        'point' => [
+/*        'point' => [
             'geomtype' => 'geography',
             'srid' => 4326
-        ],
+        ],*/
     ];
 
     protected $casts = [
@@ -54,8 +56,23 @@ class Parcel extends Model
             ->orderBy('created_at', 'DESC');
     }
 
+    public function areaCalculateGa()
+    {
+        return number_format(round(($this->area_calculate) / 10000, 4), 4);
+    }
+
     public function parcelProblems()
     {
         return $this->hasMany(ParcelProblem::class);
+    }
+    public function parcelIntersectProblems()
+    {
+        return $this->hasMany(ParcelProblem::class)
+            ->where('type', ParcelProblem::INTERSECTED);
+    }
+
+    public function getGeomAsWktAttribute()
+    {
+
     }
 }

@@ -48,3 +48,15 @@ leafletMap.addEventListener('mousemove', function (ev) {
 leafletMap.addEventListener('mouseout', function () {
     $('#coordinates-map').html('');
 });
+/*export function setStyleIn (id) {
+    parcelFromBaseLayer.eachLayer(function (layer) {
+        console.log(layer)
+        console.log(layer.feature)
+        console.log(layer.feature.properties)
+        if (Number(layer.feature.properties.id) === Number(id)) {
+            layer.setStyle(addFeatureFromJsonSelectedStyle);
+            layer.bringToFront();
+        }
+    });
+}*/
+

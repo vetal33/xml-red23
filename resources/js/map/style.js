@@ -73,6 +73,27 @@ window.addFeatureFromJsonSelectedStyle = {
     "fillColor": '#fff327',
 };
 
+window.intersectSelectedStyle = {
+    "color": '#9a14a5',
+    "weight": 1,
+    "opacity": 1,
+    "fillOpacity": 0.5,
+    "fillColor": '#fa28e4',
+};
+
+/**
+ * PopUp message style
+ */
+window.swalStyle = {
+    title: "Ви впевнені?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#34c38f",
+    cancelButtonColor: "#f46a6a",
+    confirmButtonText: "Так, видалити ділянку!",
+    cancelButtonText: "Відмінити",
+};
+
 /**
  * Стиль для ділянки перетину з локальним фактором
  */

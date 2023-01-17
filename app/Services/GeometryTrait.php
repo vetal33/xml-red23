@@ -97,4 +97,12 @@ trait GeometryTrait
         return $numberArr['is_valid'];
     }
 
+    public function isIntersectAsGeom($geom1, $geom2)
+    {
+        $result = DB::select(DB::raw("SELECT ST_AsText(ST_Intersection(ST_GeomFromText(:geom1), ST_GeomFromText(:geom2) )) as geom"), ['geom1' => $geom1, 'geom2' => $geom2]);
+        $numberArr = (array)$result[0];
+
+        return $numberArr['geom'];
+    }
+
 }

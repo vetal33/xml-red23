@@ -117,6 +117,80 @@ leafletMap.addEventListener('mousemove', function (ev) {
 leafletMap.addEventListener('mouseout', function () {
   $('#coordinates-map').html('');
 });
+/*export function setStyleIn (id) {
+    parcelFromBaseLayer.eachLayer(function (layer) {
+        console.log(layer)
+        console.log(layer.feature)
+        console.log(layer.feature.properties)
+        if (Number(layer.feature.properties.id) === Number(id)) {
+            layer.setStyle(addFeatureFromJsonSelectedStyle);
+            layer.bringToFront();
+        }
+    });
+}*/
+
+/***/ }),
+
+/***/ "./resources/js/map/parcel-layers.js":
+/*!*******************************************!*\
+  !*** ./resources/js/map/parcel-layers.js ***!
+  \*******************************************/
+/***/ (function() {
+
+function getAllParcels() {
+  var href = $('#get-all-parcels').data('href');
+  $.ajax({
+    url: href,
+    method: 'GET',
+    dataType: 'json',
+    processData: false,
+    contentType: false,
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function success(data) {
+      if (data.result === false) {
+        toastr["error"](data.error);
+      }
+
+      parcelFromBaseLayer.clearLayers();
+      var feature = data.map(function (item) {
+        var coord = JSON.parse(item.json);
+        var item_new = {
+          "type": "Feature",
+          "properties": {
+            //"area": item.area,
+            "id": item.id,
+            "cadnum": item.cadNum,
+            "name": "parcelFromBase",
+            "fromBase": true,
+            "usage": item.usage
+          },
+          "geometry": {
+            "type": coord.type,
+            "coordinates": coord.coordinates
+          }
+        };
+        return item_new;
+      });
+
+      if (feature.length > 0) {
+        parcelFromBaseLayer.addData(feature);
+        parcelFromBaseLayer.nameLayer = "parcels";
+        parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
+        parcelFromBaseLayer.addTo(parcelFromBaseGroup);
+        /** Додаємо групу до карти    */
+
+        parcelFromBaseGroup.addTo(leafletMap); //leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
+      }
+    },
+    error: function error(jqXHR, textStatus, errorThrown) {
+      toastr["error"]("Помилка обробки файла!");
+    }
+  });
+}
+
+getAllParcels();
 
 /***/ }),
 
@@ -124,13 +198,18 @@ leafletMap.addEventListener('mouseout', function () {
 /*!**************************************!*\
   !*** ./resources/js/map/services.js ***!
   \**************************************/
-/***/ (function() {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "setBounds": function() { return /* binding */ setBounds; },
+/* harmony export */   "setStyleIn": function() { return /* binding */ setStyleIn; }
+/* harmony export */ });
 // $(document).ready(function () {
 
 /**  Створюєм глобальний об'єкт Map   */
-window.leafletMap = L.map('map').setView([48.5, 31], 6); // var leafletMap = L.map('map').setView([48.5, 31], 6);
-
+window.leafletMap = L.map('map').setView([48.5, 31], 6);
 /**  Створюєм глобальні групи шарів   */
 
 /*window.mejaLayersGroup = L.layerGroup();
@@ -145,6 +224,8 @@ window.parcelLayer = L.geoJSON();*/
 
 window.parcelFromBaseLayer = L.geoJSON();
 window.parcelFromBaseGroup = L.layerGroup();
+window.parcelIntersectFromBaseLayer = L.geoJSON();
+window.parcelIntersectFromBaseGroup = L.layerGroup();
 /*window.pointLayer = L.geoJSON();
 window.markerLayer = L.marker();*/
 // })
@@ -161,7 +242,19 @@ function setBounds($boundsStr) {
 
   return arrayBounds;
 }
+function setStyleIn(layerName, id) {
+  var isZoom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  layerName.eachLayer(function (layer) {
+    if (Number(layer.feature.properties.id) === Number(id)) {
+      layer.setStyle(addFeatureFromJsonSelectedStyle);
+      layer.bringToFront();
 
+      if (isZoom === true) {
+        leafletMap.fitBounds(layer.getBounds());
+      }
+    }
+  });
+}
 $('body').on('click', '.btn-zoom', function (e) {
   e.preventDefault(); //$('#calculate-parcel').removeClass('disabled');
   //let boundsStr = $(this).attr('data-bounds');
@@ -180,6 +273,23 @@ $('body').on('click', '.btn-zoom', function (e) {
   //setParcelValueInTable(layer);
 
 });
+toastr.options = {
+  "closeButton": true,
+  "debug": false,
+  "newestOnTop": false,
+  "progressBar": false,
+  "positionClass": "toast-bottom-right",
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": 300,
+  "hideDuration": 1000,
+  "timeOut": 7000,
+  "extendedTimeOut": 1000,
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+};
 
 /***/ }),
 
@@ -260,6 +370,26 @@ window.addFeatureFromJsonSelectedStyle = {
   "fillOpacity": 0.5,
   "fillColor": '#fff327'
 };
+window.intersectSelectedStyle = {
+  "color": '#9a14a5',
+  "weight": 1,
+  "opacity": 1,
+  "fillOpacity": 0.5,
+  "fillColor": '#fa28e4'
+};
+/**
+ * PopUp message style
+ */
+
+window.swalStyle = {
+  title: "Ви впевнені?",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#34c38f",
+  cancelButtonColor: "#f46a6a",
+  confirmButtonText: "Так, видалити ділянку!",
+  cancelButtonText: "Відмінити"
+};
 /**
  * Стиль для ділянки перетину з локальним фактором
  */
@@ -324,15 +454,49 @@ window.pointsSelectedStyle = {
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 !function() {
+"use strict";
 /*!*****************************!*\
   !*** ./resources/js/map.js ***!
   \*****************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _map_services_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./map/services.js */ "./resources/js/map/services.js");
 //window.addBaseLayars = require('./map/services.js');
 //import './map/services';
-window.addBaseLayars = __webpack_require__(/*! ./map/base-layers.js */ "./resources/js/map/base-layers.js"); //require('base-layers');
+window.addBaseLayars = __webpack_require__(/*! ./map/base-layers.js */ "./resources/js/map/base-layers.js");
+window.addParcelLayars = __webpack_require__(/*! ./map/parcel-layers.js */ "./resources/js/map/parcel-layers.js");
+ //require('base-layers');
 //import myModule from 'base-layers';
 
 /*import { myFunction } from './base-layers.js';
@@ -348,23 +512,6 @@ $(document).ready(function () {
     var thisEl = this;
     sendFile(formData, href, thisEl); //$("#file-form-jsonFile")[0].closest('.d-inline-block').reset();
   });
-  toastr.options = {
-    "closeButton": true,
-    "debug": false,
-    "newestOnTop": false,
-    "progressBar": false,
-    "positionClass": "toast-bottom-right",
-    "preventDuplicates": false,
-    "onclick": null,
-    "showDuration": 300,
-    "hideDuration": 1000,
-    "timeOut": 7000,
-    "extendedTimeOut": 1000,
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-  };
 
   function sendFile(data, href, thisEl) {
     $.ajax({
@@ -385,9 +532,9 @@ $(document).ready(function () {
 
         if (data.result === false) {
           toastr["error"](data.error);
-        }
+        } //parcelFromBaseLayer.clearLayers();
 
-        parcelFromBaseLayer.clearLayers();
+
         var coord = JSON.parse(data.parcel.json);
         var new_parcel = {
           "type": "Feature",
@@ -405,12 +552,13 @@ $(document).ready(function () {
           }
         };
         parcelFromBaseLayer.addData(new_parcel);
-        parcelFromBaseLayer.setStyle(addFeatureFromJsonSelectedStyle);
+        parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
         parcelFromBaseLayer.addTo(parcelFromBaseGroup);
         /** Додаємо групу до карти    */
 
-        parcelFromBaseGroup.addTo(leafletMap);
-        leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
+        parcelFromBaseGroup.addTo(leafletMap); //leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
+
+        (0,_map_services_js__WEBPACK_IMPORTED_MODULE_0__.setStyleIn)(parcelFromBaseLayer, data.parcel.id);
         updateDataTable(data);
       },
       error: function error(jqXHR, textStatus, errorThrown) {
@@ -419,61 +567,62 @@ $(document).ready(function () {
       }
     });
   }
-
-  function getAllParcels() {
-    var href = $('#get-all-parcels').data('href');
-    $.ajax({
-      url: href,
-      method: 'GET',
-      dataType: 'json',
-      processData: false,
-      contentType: false,
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      success: function success(data) {
-        if (data.result === false) {
-          toastr["error"](data.error);
-        }
-
-        parcelFromBaseLayer.clearLayers();
-        var feature = data.map(function (item) {
-          var coord = JSON.parse(item.json);
-          var item_new = {
-            "type": "Feature",
-            "properties": {
-              //"area": item.area,
-              "cadnum": item.cadNum,
-              "name": "parcelFromBase",
-              "fromBase": true,
-              "usage": item.usage
-            },
-            "geometry": {
-              "type": coord.type,
-              "coordinates": coord.coordinates
-            }
-          };
-          return item_new;
-        });
-
-        if (feature.length > 0) {
-          parcelFromBaseLayer.addData(feature);
-          parcelFromBaseLayer.nameLayer = "parcels";
-          parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
-          parcelFromBaseLayer.addTo(parcelFromBaseGroup);
-          /** Додаємо групу до карти    */
-
-          parcelFromBaseGroup.addTo(leafletMap);
-          leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
-        }
-      },
-      error: function error(jqXHR, textStatus, errorThrown) {
-        toastr["error"]("Помилка обробки файла!");
+  /*    function getAllParcels() {
+          var href = $('#get-all-parcels').data('href');
+          $.ajax({
+              url: href,
+              method: 'GET',
+              dataType: 'json',
+              processData: false,
+              contentType: false,
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success: function (data) {
+                  if (data.result === false) {
+                      toastr["error"](data.error);
+                  }
+                  parcelFromBaseLayer.clearLayers();
+  
+                  let feature = data.map(function (item) {
+                      let coord = JSON.parse(item.json);
+                      let item_new = {
+                          "type": "Feature",
+                          "properties": {
+                              //"area": item.area,
+                              "cadnum": item.cadNum,
+                              "name": "parcelFromBase",
+                              "fromBase": true,
+                              "usage": item.usage,
+                          },
+                          "geometry": {
+                              "type": coord.type,
+                              "coordinates": coord.coordinates,
+                          },
+                      };
+  
+                      return item_new;
+                  });
+  
+                  if (feature.length > 0) {
+                      parcelFromBaseLayer.addData(feature);
+                      parcelFromBaseLayer.nameLayer = "parcels";
+                      parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
+                      parcelFromBaseLayer.addTo(parcelFromBaseGroup);
+  
+                      /!** Додаємо групу до карти    *!/
+                      parcelFromBaseGroup.addTo(leafletMap);
+                      leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
+                  }
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+                  toastr["error"]("Помилка обробки файла!");
+              },
+          })
       }
-    });
-  }
+  
+      getAllParcels();*/
 
-  getAllParcels();
 
   function setSpinner(thisEl) {
     var isVisible = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
@@ -492,15 +641,7 @@ $(document).ready(function () {
   $('body').on('click', '.btn-remove', function (e) {
     e.preventDefault();
     var that = this;
-    Swal.fire({
-      title: "Ви впевнені?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#34c38f",
-      cancelButtonColor: "#f46a6a",
-      confirmButtonText: "Так, видалити ділянку!",
-      cancelButtonText: "Відмінити"
-    }).then(function (result) {
+    Swal.fire(swalStyle).then(function (result) {
       if (result.value) {
         $.ajax({
           url: $(that).attr('href'),
@@ -532,8 +673,6 @@ $(document).ready(function () {
       url: $(this).attr('href'),
       method: 'PATCH',
       dataType: 'json',
-      processData: false,
-      contentType: false,
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
@@ -555,8 +694,12 @@ $(document).ready(function () {
     var dataTable = $('.data-table');
     $(dataTable).html('');
     $(dataTable).append(data.tableHtml);
-    $('#datatable').DataTable();
+    $('#datatable').DataTable({
+      order: [[4, 'desc']]
+    });
   };
+
+  leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
 });
 }();
 /******/ })()

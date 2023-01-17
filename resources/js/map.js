@@ -1,6 +1,8 @@
 //window.addBaseLayars = require('./map/services.js');
 //import './map/services';
 window.addBaseLayars = require('./map/base-layers.js');
+window.addParcelLayars = require('./map/parcel-layers.js');
+import { setStyleIn } from "./map/services.js";
 //require('base-layers');
 //import myModule from 'base-layers';
 /*import { myFunction } from './base-layers.js';
@@ -17,24 +19,6 @@ $(document).ready(function () {
         sendFile(formData, href, thisEl);
         //$("#file-form-jsonFile")[0].closest('.d-inline-block').reset();
     });
-
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": false,
-        "positionClass": "toast-bottom-right",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": 300,
-        "hideDuration": 1000,
-        "timeOut": 7000,
-        "extendedTimeOut": 1000,
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
 
     function sendFile(data, href, thisEl) {
         $.ajax({
@@ -55,7 +39,7 @@ $(document).ready(function () {
                 if (data.result === false) {
                     toastr["error"](data.error);
                 }
-                parcelFromBaseLayer.clearLayers();
+                //parcelFromBaseLayer.clearLayers();
                 let coord = JSON.parse(data.parcel.json);
                 let new_parcel = {
                     "type": "Feature",
@@ -74,12 +58,12 @@ $(document).ready(function () {
                 };
 
                 parcelFromBaseLayer.addData(new_parcel);
-                parcelFromBaseLayer.setStyle(addFeatureFromJsonSelectedStyle);
+                parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
                 parcelFromBaseLayer.addTo(parcelFromBaseGroup);
 
                 /** Додаємо групу до карти    */
                 parcelFromBaseGroup.addTo(leafletMap);
-                leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
+                setStyleIn(parcelFromBaseLayer, data.parcel.id);
 
                 updateDataTable(data);
             },
@@ -91,7 +75,7 @@ $(document).ready(function () {
         })
     }
 
-    function getAllParcels() {
+/*    function getAllParcels() {
         var href = $('#get-all-parcels').data('href');
         $.ajax({
             url: href,
@@ -134,7 +118,7 @@ $(document).ready(function () {
                     parcelFromBaseLayer.setStyle(parcelFromBaseStyle);
                     parcelFromBaseLayer.addTo(parcelFromBaseGroup);
 
-                    /** Додаємо групу до карти    */
+                    /!** Додаємо групу до карти    *!/
                     parcelFromBaseGroup.addTo(leafletMap);
                     leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
                 }
@@ -145,7 +129,7 @@ $(document).ready(function () {
         })
     }
 
-    getAllParcels();
+    getAllParcels();*/
 
     function setSpinner(thisEl, isVisible = true) {
         if (isVisible === true) {
@@ -161,15 +145,7 @@ $(document).ready(function () {
     $('body').on('click', '.btn-remove', function (e) {
         e.preventDefault();
         var that = this;
-        Swal.fire({
-            title: "Ви впевнені?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#34c38f",
-            cancelButtonColor: "#f46a6a",
-            confirmButtonText: "Так, видалити ділянку!",
-            cancelButtonText: "Відмінити",
-        }).then(function (result) {
+        Swal.fire(swalStyle).then(function (result) {
             if (result.value) {
                 $.ajax({
                     url: $(that).attr('href'),
@@ -204,8 +180,6 @@ $(document).ready(function () {
             url: $(this).attr('href'),
             method: 'PATCH',
             dataType: 'json',
-            processData: false,
-            contentType: false,
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -230,8 +204,10 @@ $(document).ready(function () {
 
         $(dataTable).html('');
         $(dataTable).append(data.tableHtml);
-        $('#datatable').DataTable();
+        $('#datatable').DataTable({
+            order: [[4, 'desc']],
+        });
     };
 
-
+    leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
 });

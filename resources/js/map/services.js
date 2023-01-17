@@ -1,7 +1,6 @@
 // $(document).ready(function () {
     /**  Створюєм глобальний об'єкт Map   */
     window.leafletMap = L.map('map').setView([48.5, 31], 6);
-   // var leafletMap = L.map('map').setView([48.5, 31], 6);
 
 /**  Створюєм глобальні групи шарів   */
 /*window.mejaLayersGroup = L.layerGroup();
@@ -15,11 +14,14 @@ window.parcelGroup = L.layerGroup();
 window.parcelLayer = L.geoJSON();*/
 window.parcelFromBaseLayer = L.geoJSON();
 window.parcelFromBaseGroup = L.layerGroup();
+
+window.parcelIntersectFromBaseLayer = L.geoJSON();
+window.parcelIntersectFromBaseGroup = L.layerGroup();
 /*window.pointLayer = L.geoJSON();
 window.markerLayer = L.marker();*/
 // })
 
-function setBounds($boundsStr) {
+export function setBounds($boundsStr) {
     let arrayBounds = [];
     if ($boundsStr.trim() !== '') {
         $boundsStr = $boundsStr.replace('BOX(', '');
@@ -28,6 +30,18 @@ function setBounds($boundsStr) {
         arrayBounds.push([arraySplited[0].split(' ')[1], arraySplited[0].split(' ')[0]], [arraySplited[1].split(' ')[1], arraySplited[1].split(' ')[0]]);
     }
     return arrayBounds;
+}
+
+export function setStyleIn (layerName, id, isZoom = true) {
+    layerName.eachLayer(function (layer) {
+        if (Number(layer.feature.properties.id) === Number(id)) {
+            layer.setStyle(addFeatureFromJsonSelectedStyle);
+            layer.bringToFront();
+            if (isZoom === true) {
+                leafletMap.fitBounds(layer.getBounds());
+            }
+        }
+    });
 }
 
 $('body').on('click', '.btn-zoom', function (e) {
@@ -49,3 +63,20 @@ $('body').on('click', '.btn-zoom', function (e) {
 
     //setParcelValueInTable(layer);
 });
+toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-bottom-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": 300,
+    "hideDuration": 1000,
+    "timeOut": 7000,
+    "extendedTimeOut": 1000,
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+}

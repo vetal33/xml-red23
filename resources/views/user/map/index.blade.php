@@ -1,8 +1,6 @@
 @extends('user.layouts.master')
 
-@section('title')
-    @lang('translation.Leaflet_Maps')
-@endsection
+@section('title') Maps @endsection
 
 @section('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('/assets/libs/toastr/toastr.min.css') }}">

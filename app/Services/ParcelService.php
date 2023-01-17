@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Parcel;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use MStaack\LaravelPostgis\Geometries\Geometry;
 
 class ParcelService
@@ -30,6 +31,7 @@ class ParcelService
             $parcelsToMap[$i]['wkt'] = $wkt;
             $parcelsToMap[$i]['usage'] = $parcel->usage;
             $parcelsToMap[$i]['extent'] = $this->featureService->getExtent($wkt);
+            $parcelsToMap[$i]['id'] = $parcel->id;
 
             $coordJson = $this->featureService->getJsonFromWkt($wkt);
             $parcelsToMap[$i]['json'] = $coordJson;
@@ -57,6 +59,31 @@ class ParcelService
         }
 
         return $intrsectIds;
+    }
+
+    public function intersectParcelsAsGeom(Parcel $parcel)
+    {
+        try {
+            foreach ($parcel->parcelIntersectProblems as $intersectProblem) {
+                $intersectParcel = $intersectProblem->intersectParcel;
+                $geom = $this->featureService->isIntersectAsGeom($parcel->original_geom->toWKT(), $intersectParcel->original_geom->toWKT());
+                $intersectProblem->area = $this->featureService->calcArea($geom);
+                $wktTransform = $this->featureService->transformFromSC63to4326($geom);
+                $intersectProblem->geom_intersect = $wktTransform;
+                $intersectProblem->save();
+            }
+
+            return true;
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return false;
+        }
+
+
+
+
+
+
     }
 
 }

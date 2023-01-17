@@ -34,10 +34,6 @@ class MapController extends Controller
             $uploadedFile = $request->file('jsonFile');
             $fileStr = file_get_contents($uploadedFile);
 
-
-
-           // $jsonUploader->upload($uploadedFile);
-
             $wkt = $featureService->getGeomFromJsonAsWkt($fileStr);
             $data['area'] = $featureService->calcArea($wkt);
 
@@ -51,11 +47,15 @@ class MapController extends Controller
             $data['json'] = $jsonTransform;
             $data['result'] = true;
 
+            $fileName = mb_substr($uploadedFile->getClientOriginalName(),0,150);
+
             $newParcel = Parcel::create([
                 'user_id' => auth()->user()->id,
                 'extent' => $extent,
                 'geom' => $wktTransform,
                 'original_geom' => $wkt,
+                'file_name' => $fileName,
+                'area_calculate' => round($data['area'],2),
             ]);
 
             $data['id'] = $newParcel->id;
@@ -65,8 +65,17 @@ class MapController extends Controller
             foreach ($intrsectIds as $id) {
                 $newParcel->parcelProblems()->create([
                     'parcel_id' => $newParcel->id,
+                    'parcel_intersect_id' => $id,
                     'type' => ParcelProblem::INTERSECTED,
                 ]);
+
+                $parcel = Parcel::find($id);
+                $parcel->parcelProblems()->create([
+                    'parcel_id' => $parcel->id,
+                    'parcel_intersect_id' => $newParcel->id,
+                    'type' => ParcelProblem::INTERSECTED,
+                ]);
+
             }
 
             $tableHtml = view('user.map.partials.datatable', compact('parcels'))->render();

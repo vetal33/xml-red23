@@ -31,11 +31,13 @@ Route::middleware('auth')->group(function () {
     Route::get('map/all-parcels', [\App\Http\Controllers\MapController::class, 'getAllParcels'])->name('map.get-all-parcels');
     Route::post('xml-validator/structure-validate/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'structureValidate'])->name('xml-validator.structure-validate');
     Route::post('xml-validator/geom-validate/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'geomValidate'])->name('xml-validator.geom-validate');
-    Route::get('xml-validator/export-errors/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'printErrorsPdf'])->name('validator-xml.print-errors-pdf');
+   // Route::get('xml-validator/export-errors/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'printErrorsPdf'])->name('validator-xml.print-errors-pdf');
 
     Route::get('xml-validator/export-errors/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'printErrorsPdf'])->name('validator-xml.print-errors-pdf');
 
     Route::resource('parcels', \App\Http\Controllers\ParcelController::class);
+
+    Route::get('parcel-problems/get-intersect/{parcelProblemId}', [\App\Http\Controllers\ParcelProblemController::class, 'getIntersectGeom'])->name('parcel-problem.get-intersect-geom');
 });
 
 Route::name("admin.")->prefix("admin")->middleware('role:admin')->group(function () {

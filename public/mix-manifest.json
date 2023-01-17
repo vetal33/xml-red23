@@ -58,6 +58,7 @@
     "/assets/js/pages/validation.init.js": "/assets/js/pages/validation.init.js",
     "/assets/js/pages/vector-maps.init.js": "/assets/js/pages/vector-maps.init.js",
     "/assets/js/map.js": "/assets/js/map.js",
+    "/assets/js/map-edit.js": "/assets/js/map-edit.js",
     "/assets/css/app.css": "/assets/css/app.css",
     "/assets/css/map.css": "/assets/css/map.css",
     "/assets/css/icons.css": "/assets/css/icons.css",

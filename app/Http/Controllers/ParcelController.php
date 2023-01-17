@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Parcel;
+use App\Models\ParcelProblem;
+use App\Services\FeatureService;
+use App\Services\ParcelService;
 use Illuminate\Http\Request;
 
 class ParcelController extends Controller
@@ -49,9 +52,11 @@ class ParcelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Parcel $parcel, ParcelService $parcelService)
     {
-        //
+        $parcelService->intersectParcelsAsGeom($parcel);
+
+        return view('user.parcel.edit', compact('parcel'));
     }
 
     /**
@@ -89,7 +94,16 @@ class ParcelController extends Controller
             return response()->json(['result' => false, 'error' => 'Ділянки не існує']);
         }
 
+        foreach ($parcel->parcelProblems as $parcelProblem) {
+            $parcelIn = ParcelProblem::where('parcel_id', $parcelProblem->parcel_intersect_id)
+                ->where('parcel_intersect_id', $parcelProblem->parcel_id );
+            if ($parcelIn) {
+                $parcelIn->delete();
+            }
+            $parcelProblem->delete();
+        }
         $parcel->delete();
+
         $parcels = Parcel::myParcels()->get();
         $tableHtml = view('user.map.partials.datatable', compact('parcels'))->render();
 

@@ -129,6 +129,19 @@ leafletMap.addEventListener('mouseout', function () {
     });
 }*/
 
+parcelFromBaseLayer.on('click', function (e) {
+  parcelFromBaseLayer.setStyle(addFeatureFromJsonStyle);
+  e.layer.setStyle(addFeatureFromJsonSelectedStyle);
+  $('#feature-card-area').html(e.layer.feature.properties.area);
+  $('#feature-card-cud-num').html(e.layer.feature.properties.cadNum);
+  $('#feature-purpose').html(e.layer.feature.properties.purpose);
+  var bounds = JSON.stringify(e.layer.getBounds());
+  $('#geom-from-json').attr("data-bounds", bounds);
+  $('#geom-from-json').val(e.layer.feature.properties.wkt);
+  $('#save-parcel').removeClass('disabled');
+  $('#calculate').remove();
+});
+
 /***/ }),
 
 /***/ "./resources/js/map/parcel-layers.js":
@@ -556,8 +569,7 @@ $(document).ready(function () {
         parcelFromBaseLayer.addTo(parcelFromBaseGroup);
         /** Додаємо групу до карти    */
 
-        parcelFromBaseGroup.addTo(leafletMap); //leafletMap.fitBounds(parcelFromBaseLayer.getBounds());
-
+        parcelFromBaseGroup.addTo(leafletMap);
         (0,_map_services_js__WEBPACK_IMPORTED_MODULE_0__.setStyleIn)(parcelFromBaseLayer, data.parcel.id);
         updateDataTable(data);
       },

@@ -7,9 +7,11 @@ File: Datatables Js File
 */
 
 $(document).ready(function() {
-    var dtable = $('#datatable').DataTable({
+/*    var dtable = $('#datatable').DataTable({
         order: [[4, 'desc']],
-    });
+    });*/
+
+    var dtable = $('#datatable').DataTable();
 
     //Buttons examples
 /*    var table = $('#datatable-buttons').DataTable({

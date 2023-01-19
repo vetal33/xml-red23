@@ -60,3 +60,17 @@ leafletMap.addEventListener('mouseout', function () {
     });
 }*/
 
+parcelFromBaseLayer.on('click', function (e) {
+    parcelFromBaseLayer.setStyle(addFeatureFromJsonStyle);
+    e.layer.setStyle(addFeatureFromJsonSelectedStyle);
+    $('#feature-card-area').html(e.layer.feature.properties.area);
+    $('#feature-card-cud-num').html(e.layer.feature.properties.cadNum);
+    $('#feature-purpose').html(e.layer.feature.properties.purpose);
+
+    let bounds = JSON.stringify(e.layer.getBounds());
+    $('#geom-from-json').attr("data-bounds", bounds);
+    $('#geom-from-json').val(e.layer.feature.properties.wkt);
+    $('#save-parcel').removeClass('disabled');
+    $('#calculate').remove();
+});
+

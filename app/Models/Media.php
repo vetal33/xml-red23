@@ -39,5 +39,12 @@ class Media extends Model
         return $this->belongsTo(User::class);
     }
 
+    public static function getMediaById(int $id)
+    {
+        return Media::where('user_id', auth()->user()->id)
+            ->where('id', $id)
+            ->first();
+    }
+
 
 }

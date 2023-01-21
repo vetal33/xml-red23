@@ -250,7 +250,8 @@ mix.combine('resources/js/pages/calendars.js', folder.dist_assets + "js/pages/ca
 mix.combine('resources/js/pages/schedules.js', folder.dist_assets + "js/pages/schedules.js");
 mix.combine('resources/js/pages/leaflet-us-states.js', folder.dist_assets + "js/pages/leaflet-us-states.js");
 
-mix.combine('resources/js/xml-validation.js', folder.dist_assets + "js/xml-validation.js");
+/*mix.combine('resources/js/xml-validation.js', folder.dist_assets + "js/xml-validation.js");*/
 //mix.js('resources/js/base-layers.js', folder.dist_assets + "js/base-layers.js");
 mix.js('resources/js/map.js', folder.dist_assets + "js/map.js");
 mix.js('resources/js/map-edit.js', folder.dist_assets + "js/map-edit.js");
+mix.js('resources/js/normative-xml-validator.js', folder.dist_assets + "js/normative-xml-validator.js");

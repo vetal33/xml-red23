@@ -64,21 +64,26 @@ class NormativeXmlSaver extends BaseXmlSaver implements XmlSaverInterface
 
                     $data[$key][$item]['coordinates'] = $this->getGeoJson($wkt);
                     $data[$key][$item]['points'] = $number;
-
                     if (array_key_exists('ZoneNumber', $valMulti)) {
                         $data[$key][$item]['name'] = $valMulti['ZoneNumber'];
                         $data[$key][$item]['km2'] = $valMulti['Km2'];
+                        $data[$key][$item]['area'] = $valMulti['ZoneArea']['Size'];
                     }
                     if (array_key_exists('LocalFactorCode', $valMulti)) {
                         $data[$key][$item]['name'] = $valMulti['NameFactor'];
                         $data[$key][$item]['code'] = $valMulti['LocalFactorCode'];
+                        if (array_key_exists('LocalFactorArea', $valMulti)) {
+                            $data[$key][$item]['area'] = $valMulti['LocalFactorArea']['Size'];
+                        }
                     }
                     if (array_key_exists('CodeAgroGroup', $valMulti)) {
                         $data[$key][$item]['code'] = $valMulti['CodeAgroGroup'];
+                        $data[$key][$item]['area'] = $valMulti['AgroGroupArea']['Size'];
                     }
                     if (array_key_exists('RegionNumber', $valMulti)) {
                         $data[$key][$item]['name'] = $valMulti['RegionNumber'];
                         $data[$key][$item]['ki'] = $valMulti['RegionIndex'];
+                        $data[$key][$item]['area'] = $valMulti['RegionArea']['Size'];
                     }
                 }
             } else {

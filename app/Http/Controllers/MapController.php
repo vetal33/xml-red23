@@ -27,8 +27,7 @@ class MapController extends Controller
             $rules = (new JsonUploadRequest())->rules();
             $validator = Validator::make($request->all(), $rules);
 
-            if ($validator->fails())
-            {
+            if ($validator->fails()) {
                 return response()->json(['result' => false, 'error' => $validator->errors()->first()]);
             }
             $uploadedFile = $request->file('jsonFile');
@@ -84,7 +83,7 @@ class MapController extends Controller
         }
     }
 
-    public function getAllParcels(Request $request, FeatureService $featureService, ParcelService $parcelService)
+    public function getAllParcels(Request $request, ParcelService $parcelService)
     {
         if ($request->ajax()) {
              $parcels = Parcel::myParcels()->get();

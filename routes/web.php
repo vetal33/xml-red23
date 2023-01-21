@@ -30,7 +30,10 @@ Route::middleware('auth')->group(function () {
     Route::post('map/upload-json', [\App\Http\Controllers\MapController::class, 'uploadJson'])->name('map.upload-json');
     Route::get('map/all-parcels', [\App\Http\Controllers\MapController::class, 'getAllParcels'])->name('map.get-all-parcels');
     Route::post('xml-validator/structure-validate/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'structureValidate'])->name('xml-validator.structure-validate');
-    Route::post('xml-validator/geom-validate/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'geomValidate'])->name('xml-validator.geom-validate');
+
+    Route::get('xml-validator/geom-validate', [\App\Http\Controllers\XmlValidatorController::class, 'geomValidate'])->name('xml-validator.geom-validate');
+    Route::post('xml-validator/geom-zone-validate', [\App\Http\Controllers\XmlValidatorController::class, 'geomZoneValidate'])->name('xml-validator.geom-zone-validate');
+    Route::post('xml-validator/geom-region-validate', [\App\Http\Controllers\XmlValidatorController::class, 'geomRegionValidate'])->name('xml-validator.geom-region-validate');
    // Route::get('xml-validator/export-errors/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'printErrorsPdf'])->name('validator-xml.print-errors-pdf');
 
     Route::get('xml-validator/export-errors/{file}', [\App\Http\Controllers\XmlValidatorController::class, 'printErrorsPdf'])->name('validator-xml.print-errors-pdf');

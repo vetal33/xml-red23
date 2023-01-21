@@ -105,4 +105,12 @@ trait GeometryTrait
         return $numberArr['geom'];
     }
 
+    public function isValid($geom): bool
+    {
+        $result = DB::select(DB::raw('SELECT ST_IsValid(ST_GeomFromText(:geom)) = true as is_valid'), ['geom' => $geom]);
+        $numberArr = (array)$result[0];
+
+        return $numberArr['is_valid'];
+    }
+
 }

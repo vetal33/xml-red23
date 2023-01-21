@@ -59,6 +59,7 @@
     "/assets/js/pages/vector-maps.init.js": "/assets/js/pages/vector-maps.init.js",
     "/assets/js/map.js": "/assets/js/map.js",
     "/assets/js/map-edit.js": "/assets/js/map-edit.js",
+    "/assets/js/normative-xml-validator.js": "/assets/js/normative-xml-validator.js",
     "/assets/css/app.css": "/assets/css/app.css",
     "/assets/css/map.css": "/assets/css/map.css",
     "/assets/css/icons.css": "/assets/css/icons.css",
@@ -475,6 +476,5 @@
     "/assets/js/app.min.js": "/assets/js/app.min.js",
     "/assets/js/pages/calendars.js": "/assets/js/pages/calendars.js",
     "/assets/js/pages/schedules.js": "/assets/js/pages/schedules.js",
-    "/assets/js/pages/leaflet-us-states.js": "/assets/js/pages/leaflet-us-states.js",
-    "/assets/js/xml-validation.js": "/assets/js/xml-validation.js"
+    "/assets/js/pages/leaflet-us-states.js": "/assets/js/pages/leaflet-us-states.js"
 }

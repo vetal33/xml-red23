@@ -6,17 +6,18 @@ use App\Http\Requests\XmlNormativeRequest;
 use App\Models\Media;
 use App\Services\NormativeXmlParser;
 use App\Services\NormativeXmlSaver;
-use App\Services\XmlService;
+use App\Services\NormativeXmlService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class XmlValidatorController extends Controller
 {
-    private XmlService $xmlService;
+    private NormativeXmlService $xmlService;
     private NormativeXmlParser $normativeXmlParser;
     private NormativeXmlSaver $normativeXmlSaver;
 
-    public function __construct(XmlService $xmlService, NormativeXmlParser $normativeXmlParser, NormativeXmlSaver $normativeXmlSaver)
+    public function __construct(NormativeXmlService $xmlService, NormativeXmlParser $normativeXmlParser, NormativeXmlSaver $normativeXmlSaver)
     {
         $this->xmlService = $xmlService;
         $this->normativeXmlParser = $normativeXmlParser;
@@ -43,7 +44,7 @@ class XmlValidatorController extends Controller
             return redirect()->route('xml-validator.index')->withErrors('Помилка збереження файла');
         }
 
-        if ($activeXml->count() > 0 ) {
+        if ($activeXml->count() > 0) {
             $activeFile = $activeXml->first();
             Storage::delete($activeFile->path);
             $activeFile->update([
@@ -89,29 +90,71 @@ class XmlValidatorController extends Controller
         return redirect()->route('xml-validator.index')->with(['structure' => true]);
     }
 
-    public function geomValidate(Media $file)
+    public function geomValidate(Request $request)
     {
-        $xmlFile = $this->xmlService->getSimpleXML(Storage::disk('local')->path($file->path));
-        if (!$xmlFile) {
-            if (!empty($this->xmlService->getErrors())) {
-                return back()->withErrors(['uploadFile' => $this->xmlService->getErrors()[0]]);
+        if ($request->ajax()) {
+            $file = Media::getMediaById($request->file);
+            if (!$file) {
+                return response()->json(['result' => false, 'error' => 'Файл не знайдено']);
             }
 
-            return back()->withErrors(['uploadFile' => $this->xmlService::ERROR_DEFAULT]);
+            $xmlFile = $this->xmlService->getSimpleXML(Storage::disk('local')->path($file->path));
+            if (!$xmlFile) {
+                if (!empty($this->xmlService->getErrors())) {
+                    return response()->json(['result' => false, 'error' => $this->xmlService->getErrors()[0]]);
+                }
+
+                return response()->json(['result' => false, 'error' => $this->xmlService::ERROR_DEFAULT]);
+            }
+
+            $parseXml = $this->normativeXmlParser->parse($xmlFile);
+            if (!$parseXml) {
+                /*return response()->json
+                    ->withErrors(['uploadFile' => $this->normativeXmlParser->getErrors()[0]])
+                    ->with(['structure' => true]);*/
+            }
+
+            $parseJson = $this->normativeXmlSaver->toGeoJson($parseXml, false);
+
+            return response()->json(['result' => true, 'parseJson' => $parseJson]);
         }
-
-        $parseXml = $this->normativeXmlParser->parse($xmlFile);
-
-        if (!$parseXml) {
-            return back()
-                ->withErrors(['uploadFile' => $this->normativeXmlParser->getErrors()[0]])
-                ->with(['structure' => true]);
-        }
-        $parseJson = $this->normativeXmlSaver->toGeoJson($parseXml, false);
-
-        return redirect()->route('xml-validator.index')->with(['geom' => true]);
     }
 
+    public function geomZoneValidate(Request $request)
+    {
+        if ($request->ajax()) {
+            $dataArray = json_decode($request->data, TRUE);
+            $zones = ['zones' => $dataArray];
+            $wktData = $this->xmlService->prepareJsonToWkt($zones);
+            $result = $this->xmlService->checkAreaFeature($wktData['zones'], 'zones');
+            if ($result !== true) {
+                $nameBlock = 'Зони';
+                $data = $this->xmlService->prepareAreaErrors($result['zones'], NormativeXmlService::ERROR_TYPE_AREA);
+                $tableHtml = view('user.xml-validator.partials.normative-validation-errors', ['errors' => $data, 'nameBlock' => $nameBlock])->render();
+                return response()->json(['result' => false, 'tableHtml' => $tableHtml]);
+            }
+
+            return response()->json(['result' => true]);
+        }
+    }
+
+    public function geomRegionValidate(Request $request)
+    {
+        if ($request->ajax()) {
+            $dataArray = json_decode($request->data, TRUE);
+            $region = ['region' => $dataArray];
+            $wktData = $this->xmlService->prepareJsonToWkt($region);
+            $result = $this->xmlService->checkAreaFeature($wktData['region'], 'region');
+            if ($result !== true) {
+                $nameBlock = 'Райони';
+                $data = $this->xmlService->prepareAreaErrors($result['region'], NormativeXmlService::ERROR_TYPE_AREA);
+                $tableHtml = view('user.xml-validator.partials.normative-validation-errors', ['errors' => $data, 'nameBlock' => $nameBlock])->render();
+                return response()->json(['result' => false, 'tableHtml' => $tableHtml]);
+            }
+
+            return response()->json(['result' => true]);
+        }
+    }
 
 
     public function printErrorsPdf(Media $file)
